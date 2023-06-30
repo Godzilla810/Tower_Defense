@@ -7,7 +7,7 @@ public class LookAtEnemy : MonoBehaviour
     public Transform target;
     public Transform partToRotate;
     public float reactionTime = 0.2f;
-    public float range = 15f;
+    public float attackRange = 15f;
     public float turnSpeed = 10f;
 
     // Start is called before the first frame update
@@ -41,7 +41,7 @@ public class LookAtEnemy : MonoBehaviour
                 nearestEnemy = enemy;
             }
         }
-        if (nearestEnemy != null && shortestDistance <= range){
+        if (nearestEnemy != null && shortestDistance <= attackRange){
             target = nearestEnemy.transform;
             // targetEnemy = nearestEnemy.GetComponent<Enemy>();
         }
@@ -65,6 +65,6 @@ public class LookAtEnemy : MonoBehaviour
     void OnDrawGizmosSelected()     //在Scene視圖中繪製調試或可視化信息的圖形元素
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, range);
+        Gizmos.DrawWireSphere(transform.position, attackRange);
     }
 }

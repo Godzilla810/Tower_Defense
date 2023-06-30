@@ -22,13 +22,16 @@ public class Fire : MonoBehaviour
         if (target != null && !isCoolDown){
             Shoot();
             StartCoroutine(CoolDown());
-            
         }
     }
 
     public void Shoot(){
-        Instantiate(bulletPrefab, firePoint.position, transform.rotation);
+        //發射同時將target資料給Bullet
+        GameObject bulletGo = (GameObject)Instantiate(bulletPrefab, firePoint.position, transform.rotation);
+        Bullet bullet = bulletGo.GetComponent<Bullet>();
+        bullet.GetTarget(target);
     }
+    
     IEnumerator CoolDown(){
         isCoolDown = true;
         yield return new WaitForSeconds(1f / fireRate);
