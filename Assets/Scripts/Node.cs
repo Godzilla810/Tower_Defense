@@ -3,14 +3,18 @@ using UnityEngine.EventSystems;
 
 public class Node : MonoBehaviour
 {
+    public Vector3 positionOffset;
+
     private Renderer rend;
     private Color startColor;
     public Color hoverColor;
+    public Color disabledColor;
 
-    private GameObject turret;
-    public Vector3 positionOffset;
+    [Header("Optional")]
+    public GameObject turret;
 
     BuildManager buildManager;
+
     
     void Start() {
         buildManager = BuildManager.instance;
@@ -18,14 +22,16 @@ public class Node : MonoBehaviour
         rend = GetComponent<Renderer>();
         startColor = rend.material.color;
     }
+    public Vector3 GetBuildPosition() {
+        return transform.position + positionOffset;
+    }
     //Up跟Down處理點擊
     void OnMouseDown() {
-        GameObject turretToBuild = buildManager.GetTurretToBuild();
         //正在按選單
         if (EventSystem.current.IsPointerOverGameObject())
 			return;
         //未選擇建立哪個砲台
-        if (turretToBuild == null){
+        if (!buildManager.CanBuild){
             return;
         }
         //該位置已建立砲台
@@ -33,19 +39,22 @@ public class Node : MonoBehaviour
             Debug.Log("Cant build here");
             return;
         }
-        
-        turret = (GameObject)Instantiate(turretToBuild, transform.position + positionOffset, transform.rotation);
+        //建立砲台
+        buildManager.BuildTurretOn(this);
     }
     //顏色提示
     //Enter跟Exit處理覆蓋
     void OnMouseEnter() {
-        GameObject turretToBuild = buildManager.GetTurretToBuild();
         //正在按選單
         if (EventSystem.current.IsPointerOverGameObject())
 			return;
         //未選擇建立哪個砲台
-		if (turretToBuild == null)
+		if (!buildManager.CanBuild)
 			return;
+        if (!buildManager.HasMoney){
+            rend.material.color = disabledColor;
+            return;
+        }
         rend.material.color = hoverColor;
     }
     void OnMouseExit() {

@@ -15,19 +15,25 @@ public class EnemyMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //朝點移動
         Vector3 moveDir = targetPoint.position - transform.position;
         transform.Translate(moveDir.normalized * speed * Time.deltaTime, Space.World);
         if (Vector3.Distance(transform.position, targetPoint.position) <= 0.4f){
             FindNextPoint();
         }
     }
-
+    //找下一個點
     void FindNextPoint(){
         if (pathPointIndex >= PathPoint.points.Length - 1){     //走到終點
-            Destroy(gameObject);
+            EndPath();
             return;
         }
         pathPointIndex++;
         targetPoint = PathPoint.points[pathPointIndex];
+    }
+    //敵人死亡(終點)
+    void EndPath(){
+        PlayerStatus.Lives--;
+        GetComponent<EnemyStatus>().DestroyEnemy();
     }
 }

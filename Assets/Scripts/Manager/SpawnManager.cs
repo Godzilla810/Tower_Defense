@@ -16,16 +16,18 @@ public class SpawnManager : MonoBehaviour
     public int timeBetweenWaves = 5;
     public bool isWave = false;
 
+    private GameManager gameManager;
+
     // Start is called before the first frame update
     void Start()
     {
-        
+        gameManager = GetComponent<GameManager>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (!isWave){
+        if (!gameManager.isGameOver && !isWave){
             StartCoroutine(Countdown());
             StartCoroutine(SpawnWave());
         }
@@ -33,6 +35,7 @@ public class SpawnManager : MonoBehaviour
     IEnumerator Countdown(){
         isWave = true;
         for (int countdown = timeBetweenWaves; countdown > 0; countdown--){
+            // countdownText.text = string.Format("{0:00.00}", countdown);
             countdownText.text = countdown.ToString();
             yield return new WaitForSeconds(1);
         }
@@ -40,6 +43,7 @@ public class SpawnManager : MonoBehaviour
     }
     IEnumerator SpawnWave(){
         waveIndex++;
+        PlayerStatus.Rounds++;
         for (int i = 0; i < waveIndex; i++){
             SpawnEnemy(enemyPrefab);
             yield return new WaitForSeconds(timeBetweenEnemies);

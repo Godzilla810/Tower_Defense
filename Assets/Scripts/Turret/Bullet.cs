@@ -3,10 +3,10 @@ using UnityEngine;
 public class Bullet : MonoBehaviour
 {
     public float speed = 40.0f;
+    public int damage = 50;
     public float explosionRadius = 0f;
     private Transform target;
     public GameObject bulletPiecesPrefab;
-    public GameObject enemyPiecesPrefab;
     
     public void GetTarget(Transform _target){
         target = _target;
@@ -24,22 +24,29 @@ public class Bullet : MonoBehaviour
         }
         transform.LookAt(target);
     } 
-    void Explode(){
-        Collider[] enemiesInAttackRange = Physics.OverlapSphere(transform.position, explosionRadius);
-        foreach (Collider other in enemiesInAttackRange){
-            if (other.tag == "Enemy"){
-                Destroy(other.gameObject);
-                GameObject enemyPieces = (GameObject)Instantiate(enemyPiecesPrefab, transform.position, transform.rotation);
-                Destroy(enemyPieces, 1f);
-            }
-        }
-    }
+
     void OnTriggerEnter(Collider other) {
         Explode();
         Destroy(gameObject);
         GameObject bulletPieces = (GameObject)Instantiate(bulletPiecesPrefab, transform.position, transform.rotation);
         Destroy(bulletPieces, 1f);
     }
+    
+    void Explode(){
+        Collider[] enemiesInAttackRange = Physics.OverlapSphere(transform.position, explosionRadius);
+        foreach (Collider other in enemiesInAttackRange){
+            if (other.tag == "Enemy"){
+                Damage(other.transform);
+            }
+        }
+    }
+    void Damage(Transform enemy){
+        EnemyStatus enemyScript = enemy.GetComponent<EnemyStatus>();
+        if (enemyScript != null){
+            enemyScript.TakeDamage(damage);
+        }
+    }
+
     void OnDrawGizmosSelected ()
 	{
 		Gizmos.color = Color.red;
